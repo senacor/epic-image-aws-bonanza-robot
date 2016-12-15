@@ -6,6 +6,8 @@ import json
 import paho.mqtt.client as mqtt
 from time import time
 
+MQTT_IP = "10.22.0.204"
+MQTT_PORT = 1883
 
 FORWARD = "forward"
 BACKWARD = "backward"
@@ -149,7 +151,7 @@ try:
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_publish = on_publish
-    client.connect("10.22.0.204", 1883, 60)
+    client.connect(MQTT_IP, MQTT_PORT, 60)
 
     client.loop_forever()
 
