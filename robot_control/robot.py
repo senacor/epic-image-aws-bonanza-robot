@@ -40,7 +40,7 @@ def backward():
 
 
 def left():
-    print("Moving backward")
+    print("Moving left")
     GPIO.output(WHEEL_RIGHT_1, False)
     GPIO.output(WHEEL_RIGHT_2, True)
     GPIO.output(WHEEL_LEFT_1, False)
@@ -48,7 +48,7 @@ def left():
 
 
 def right():
-    print("Moving backward")
+    print("Moving right")
     GPIO.output(WHEEL_RIGHT_1, False)
     GPIO.output(WHEEL_RIGHT_2, False)
     GPIO.output(WHEEL_LEFT_1, False)
