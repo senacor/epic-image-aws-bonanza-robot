@@ -1,39 +1,39 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Key from './Key.jsx';
+import React, { Component } from 'react'
+import logo from './logo.svg'
+import './App.css'
+import Key from './Key.jsx'
 import {DirectionCommand, StopCommand} from './Command'
 
 class App extends Component {
 
-  constructor(){
+  constructor () {
     super()
     this.down = this.down.bind(this)
     this.up = this.up.bind(this)
   }
 
-  move(direction){
+  move (direction) {
     new DirectionCommand(direction).move()
   }
 
-  stop(event){
+  stop (event) {
     new StopCommand().stop()
   }
 
-  down(event) {
-    if(event.key != this.buttonPressed){
+  down (event) {
+    if (event.key !== this.buttonPressed) {
       this.buttonPressed = event.key
       this.move(this._translateDirection(event.key))
     }
   }
 
-  up(event) {
-    if(event.key == this.buttonPressed){
+  up (event) {
+    if (event.key === this.buttonPressed) {
       this.stop()
     }
   }
 
-  _translateDirection(direction){
+  _translateDirection (direction) {
     switch (direction) {
       case 'ArrowUp' : return 'up'
       case 'ArrowDown' : return 'down'
@@ -42,7 +42,7 @@ class App extends Component {
     }
   }
 
-  render() {
+  render () {
     return (
       <div tabIndex="0" onKeyDown={this.down} onKeyUp={this.up}>
         <div className="App" >
@@ -60,9 +60,9 @@ class App extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
 }
 
-export default App;
+export default App
