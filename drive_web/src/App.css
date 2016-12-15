@@ -21,6 +21,13 @@
 .container {
   display: flex; /* or inline-flex */
   justify-content: center;
+  flex-direction: row;
+}
+
+.container2 {
+  display: flex; /* or inline-flex */
+  justify-content: center;
+  flex-direction: column;
 }
 
 .transbox {
@@ -33,6 +40,20 @@
 
 .activeGear {
   background-color: grey;
+}
+
+.down {
+  width: 140px;
+  height: 130px;
+  background-image: url(../public/down.png);
+  background-repeat: no-repeat;
+}
+
+.up {
+  width: 140px;
+  height: 130px;
+  background-image: url(../public/up.png);
+  background-repeat: no-repeat;
 }
 
 @keyframes App-logo-spin {

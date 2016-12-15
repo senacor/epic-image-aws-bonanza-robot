@@ -54,7 +54,7 @@ class App extends Component {
           <div className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <h2>Drive the slowest car in the world!</h2>
-          </div>
+          </div>  
           <div className="App-intro container">
             <Key ref="up" direction="up"/>
           </div>
@@ -66,7 +66,7 @@ class App extends Component {
           <div className="App-intro">
             <Camera ref="camera"/>
           </div>
-          <div className="App-intro">
+          <div>
             <Gear />
           </div>
         </div>
