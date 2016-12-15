@@ -15,8 +15,10 @@ class Key extends Component {
   }
 
   start () {
-    this.setState({pressed: true})
-    new DirectionCommand(this.props.direction).move()
+  	if(!this.state.pressed){
+      this.setState({pressed: true})
+      new DirectionCommand(this.props.direction).move()
+	}
   }
 
   stop () {

@@ -7,9 +7,14 @@ const STOP = 'stop'
 const LEFT = 'left'
 const RIGHT = 'right'
 
-var send = function (command) {
+var sendCommand = function (command) {
   console.log('executing command ' + command)
   client.publish('robot/drive', command)
 }
 
-module.exports = {send, FORWARD, BACKWARD, STOP, LEFT, RIGHT}
+var sendClick = function () {
+  console.log('sending click ')
+  client.publish('robot/camera', 'click')
+}
+
+module.exports = {sendCommand, sendClick, FORWARD, BACKWARD, STOP, LEFT, RIGHT}
