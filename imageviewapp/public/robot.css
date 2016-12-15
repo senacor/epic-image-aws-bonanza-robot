@@ -2,6 +2,32 @@ body {
   background-color: #EEE;
 }
 
+label {
+  font-weight: bold;
+  display:block;clear:both;
+}
+
+div.details {
+  font-family: monospace;
+  font-size: 0.8em;
+  font-family:;
+  clear: both;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .images-container {
   display: flex;
   flex-flow: row wrap;
