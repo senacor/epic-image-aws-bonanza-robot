@@ -54,13 +54,13 @@ def left():
     print("Moving left")
     GPIO.output(WHEEL_RIGHT_1, False)
     GPIO.output(WHEEL_RIGHT_2, True)
-    GPIO.output(WHEEL_LEFT_1, False)
+    GPIO.output(WHEEL_LEFT_1, True)
     GPIO.output(WHEEL_LEFT_2, False)
 
 
 def right():
     print("Moving right")
-    GPIO.output(WHEEL_RIGHT_1, False)
+    GPIO.output(WHEEL_RIGHT_1, True)
     GPIO.output(WHEEL_RIGHT_2, False)
     GPIO.output(WHEEL_LEFT_1, False)
     GPIO.output(WHEEL_LEFT_2, True)
@@ -98,26 +98,38 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     command = str(msg.payload.decode("utf-8"))
-    print((msg.topic + " " + command))
+    topic = msg.topic
+    print((topic + " " + command))
 
-    if command == FORWARD:
-        forward()
-    if command == BACKWARD:
-        backward()
-    if command == LEFT:
-        left()
-    if command == RIGHT:
-        right()
-    elif command == STOP:
-        stop()
-    elif command == GEAR_1:
-        changeGear(GEAR_1_DUTYCYCLE)
-    elif command == GEAR_2:
-        changeGear(GEAR_2_DUTYCYCLE)
-    elif command == GEAR_3:
-        changeGear(GEAR_3_DUTYCYCLE)
-    elif command == CLICK:
-        captureImage()
+    if topic == "robot/drive":
+        if command == FORWARD:
+            forward()
+        elif command == BACKWARD:
+            backward()
+        elif command == LEFT:
+            left()
+        elif command == RIGHT:
+            right()
+        elif command == STOP:
+            stop()
+        else:
+            print(("Unhandled command " + command + " in topic " + topic))
+    elif topic == "robot/gear":
+        if command == GEAR_1:
+            changeGear(GEAR_1_DUTYCYCLE)
+        elif command == GEAR_2:
+            changeGear(GEAR_2_DUTYCYCLE)
+        elif command == GEAR_3:
+            changeGear(GEAR_3_DUTYCYCLE)
+        else:
+            print(("Unhandled command " + command + " in topic " + topic))
+    elif topic == "robot/camera":
+        if command == CLICK:
+            captureImage()
+        else:
+            print(("Unhandled command " + command + " in topic " + topic))
+    else:
+        print(("Unknown topic " + topic))
 
 
 def on_publish(client, userdata, mid):
