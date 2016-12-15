@@ -22,6 +22,10 @@ class App extends Component {
         break
       case 'ArrowRight': this.refs.right.start()
         break
+      case 'c': this.refs.camera.down()
+        break
+      default:
+        break
     }
   }
 
@@ -34,6 +38,10 @@ class App extends Component {
       case 'ArrowLeft': this.refs.left.stop()
         break
       case 'ArrowRight': this.refs.right.stop()
+        break
+      case 'c': this.refs.camera.up()
+        break
+      default:
         break
     }
   }
@@ -55,7 +63,7 @@ class App extends Component {
             <Key ref="right" direction="right"/>
           </div>
           <div className="App-intro">
-            <Camera/>
+            <Camera ref="camera"/>
           </div>
         </div>
       </div>
