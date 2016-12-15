@@ -8,6 +8,7 @@ const mqtt = require('mqtt')
 const AWS = require('aws-sdk');
 const https = require('https');
 const os = require('os');
+const details = require ('./picture-details');
 
 const bucketId = 'com.senacor.tecco.insanerobot'
 const client = mqtt.connect('mqtt://10.22.0.204:1883')
@@ -33,6 +34,14 @@ client.on('message', function(topic, message) {
 });
 
 let s3 = new AWS.S3({
+               signatureVersion: 'v4'
+             });
+if (!AWS.config.region) {
+  AWS.config.update({
+    region: 'eu-west-1'
+  });
+}
+let rekognition = new AWS.Rekognition({
                signatureVersion: 'v4'
              });
 
@@ -74,12 +83,19 @@ function listAll(s3, params) {
         return;
       }
 
-      console.log(`Downloading ${fname}`)
+      console.log(`Downloading my image ${fname}`)
       https.get(url, function(resp) {
         resp.pipe(fs.createWriteStream(fname))
             .on('unpipe', () =>
               fs.renameSync(fname, fname + ".jpg"));
       });
+
+      console.log('Detecting stuff')
+
+      details.detectDetails(s3, params, key, rekognition)
+        .then(function(data){
+            console.log('My new log ', data);
+        });
     });
   });
 }
@@ -96,7 +112,7 @@ function store(s3, params, key, payload) {
 }
 
 function get(s3, params, key) {
-  console.log(`Looking for ${key}`)
+  console.log(`Looking for stuff ${key}`)
   let getParams = Object.assign({
     Key: key
   }, params);
@@ -106,7 +122,7 @@ function get(s3, params, key) {
 }
 
 function download(s3, params, key) {
-  console.log(`Downloading ${key}`)
+  console.log(`Downloading image ${key}`)
   let getParams = Object.assign({
     Key: key
   }, params);

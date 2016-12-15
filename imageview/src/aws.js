@@ -79,6 +79,10 @@ function download(s3, params, key) {
   }, params);
   let file = fs.createWriteStream(key);
   s3.getObject(params).createReadStream().pipe(file);
+  rekognition.compareFaces(params, function (err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else     console.log(data);           // successful response
+  });
 }
 
 listAll(s3, bucketParams);
