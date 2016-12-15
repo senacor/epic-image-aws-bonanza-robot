@@ -8,7 +8,7 @@ const mqtt = require('mqtt')
 const AWS = require('aws-sdk');
 const https = require('https');
 const os = require('os');
-
+const ExifImage = require('exif').ExifImage;
 const ip = os.networkInterfaces().en0.filter(i => i.family === 'IPv4').map(e => e.address)[0];
 const bucketId = 'com.senacor.tecco.insanerobot'
 const client = mqtt.connect('mqtt://10.22.0.204:1883')
@@ -118,13 +118,33 @@ function download(s3, params, key) {
   s3.getObject(params).createReadStream().pipe(file);
 }
 
+function analyse(key) {
+  return new Promise(function(resolve, reject) {
+    try {
+      let fname = key.indexOf("test") < 0 ? __dirname + "/public/test/" + key
+                                           : __dirname + "/public/" + key
+
+      console.log("Analysing " + fname);
+      new ExifImage({ image : fname }, function (error, exifData) {
+          if (error)
+              console.log('Error: '+error.message);
+          else
+              console.log(exifData); // Do something with your data!
+              resolve(exifData);
+      });
+    } catch (error) {
+        console.log('Error: ' + error.message);
+        reject(error)
+    }
+  });
+
+}
+
 listAll(s3, bucketParams);
 
 setInterval(() => {
   listAll(s3, bucketParams);
 }, 60000)
-
-
 
 router.use(bodyParser.json())
 router.route('/')
@@ -150,9 +170,15 @@ router.route('/')
 router.route('/:id')
       .get((req, res, next) => {
         // todo plug analysis via Amazon
-        res.send({
-          status: 'Ok'
-        })
+        analyse(req.params['id'])
+          .then(result => {
+            res.send({
+              status: 'Ok',
+              exif: result
+            })
+          })
+          .catch(err => console.log(err));
+
       })
       .all((req, res, next) => {
         res.status(501).send('Not implemented')
@@ -162,6 +188,11 @@ express()
   .use(cors())
   .use(express.static(__dirname + '/public'))
   .use('/images', router)
+  .use(function (err, req, res, next) {
+      console.log('Error handled:', err.message);
+      res.writeHead(500);
+      res.end('Server error!');
+   })
   .listen(3001)
 
 
