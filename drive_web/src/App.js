@@ -3,6 +3,7 @@ import logo from './logo.svg'
 import './App.css'
 import Key from './Key.jsx'
 import Camera from './Camera.jsx'
+import Gear from './Gear.jsx'
 
 class App extends Component {
 
@@ -64,6 +65,9 @@ class App extends Component {
           </div>
           <div className="App-intro">
             <Camera ref="camera"/>
+          </div>
+          <div className="App-intro">
+            <Gear />
           </div>
         </div>
       </div>

@@ -17,4 +17,9 @@ var sendClick = function () {
   client.publish('robot/camera', 'click')
 }
 
-module.exports = {sendCommand, sendClick, FORWARD, BACKWARD, STOP, LEFT, RIGHT}
+var changeGear = function (value) {
+  console.log('changing gear')
+  client.publish('robot/gear', value)
+}
+
+module.exports = {changeGear, sendCommand, sendClick, FORWARD, BACKWARD, STOP, LEFT, RIGHT}
