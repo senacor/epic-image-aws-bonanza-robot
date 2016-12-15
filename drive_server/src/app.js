@@ -1,18 +1,9 @@
-var sendCommand = require('./send-command')
-var express = require('express')
-var app = express()
+let sendCommand = require('./send-command')
+let express = require('express')
+let cors = require('cors')
+let app = express()
 
-// Add headers
-app.use(function (reqest, response, next) {
-  // Website you wish to allow to connect
-  response.setHeader('Access-Control-Allow-Origin', 'http://localhost:9000')
-  // Request methods you wish to allow
-  response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-  // Request headers you wish to allow
-  response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
-
-  next()
-})
+app.use(cors())
 
 app.post('/drive/:command', function (request, response) {
   let command = request.params.command
