@@ -12,7 +12,17 @@ BACKWARD = "backward"
 LEFT = "left"
 RIGHT = "right"
 STOP = "stop"
+GEAR_1 = "1"
+GEAR_2 = "2"
+GEAR_3 = "3"
 CLICK = "click"
+
+GEAR_1_DUTYCYCLE = 50
+GEAR_2_DUTYCYCLE = 70
+GEAR_3_DUTYCYCLE = 100
+
+WHEEL_LEFT_PWM = 2
+WHEEL_RIGHT_PWM = 3
 
 WHEEL_RIGHT_1 = 6
 WHEEL_RIGHT_2 = 13
@@ -64,6 +74,12 @@ def stop():
     GPIO.output(WHEEL_LEFT_2, False)
 
 
+def changeGear(dutyCycle):
+        print(("Change dutycyle to " + str(dutyCycle)))
+        rightPwm.ChangeDutyCycle(dutyCycle)
+        leftPwm.ChangeDutyCycle(dutyCycle)
+
+
 def captureImage():
         print("Capture image")
         s3FileName = str(time()) + "_" + str(uuid.uuid4())
@@ -94,6 +110,12 @@ def on_message(client, userdata, msg):
         right()
     elif command == STOP:
         stop()
+    elif command == GEAR_1:
+        changeGear(GEAR_1_DUTYCYCLE)
+    elif command == GEAR_2:
+        changeGear(GEAR_2_DUTYCYCLE)
+    elif command == GEAR_3:
+        changeGear(GEAR_3_DUTYCYCLE)
     elif command == CLICK:
         captureImage()
 
@@ -108,6 +130,13 @@ try:
     GPIO.setup(WHEEL_RIGHT_2, GPIO.OUT)
     GPIO.setup(WHEEL_LEFT_1, GPIO.OUT)
     GPIO.setup(WHEEL_LEFT_2, GPIO.OUT)
+    GPIO.setup(WHEEL_RIGHT_PWM, GPIO.OUT)
+    GPIO.setup(WHEEL_LEFT_PWM, GPIO.OUT)
+
+    rightPwm = GPIO.PWM(WHEEL_RIGHT_PWM, 100)
+    rightPwm.start(GEAR_1_DUTYCYCLE)
+    leftPwm = GPIO.PWM(WHEEL_LEFT_PWM, 100)
+    leftPwm.start(GEAR_1_DUTYCYCLE)
 
     client = mqtt.Client()
     client.on_connect = on_connect
@@ -119,4 +148,6 @@ try:
 
 
 finally:
+    rightPwm.stop()
+    leftPwm.stop()
     GPIO.cleanup()
