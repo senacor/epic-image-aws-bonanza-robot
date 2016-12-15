@@ -31,6 +31,10 @@
   filter: alpha(opacity=60); /* For IE8 and earlier */
 }
 
+.activeGear {
+  background-color: grey;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
