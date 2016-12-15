@@ -9,9 +9,16 @@ function get(s3, params, key) {
 }
 
 var detectDetails = function (s3, params, key, rekognition) {
+	let awskey = key;
+	if (!key.indexOf('test') > -1) {
+		awskey = `test/${key}`;
+	}
+
+	console.log("Searching for " + awskey);
+
 	return new Promise(function(resolve, reject) {
   		// do a thing, possibly async, then…
-	  get(s3, params, key)
+	  get(s3, params, awskey)
 	  		.then(function(value) {
 	            	rekognition.detectLabels({Image: {Bytes: value.Body}}, function(err, data){
 	            		if(err){

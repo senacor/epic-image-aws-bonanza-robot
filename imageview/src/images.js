@@ -93,13 +93,6 @@ function listAll(s3, params) {
             .on('unpipe', () =>
               fs.renameSync(fname, fname + ".jpg"));
       });
-
-      console.log('Detecting stuff')
-
-      details.detectDetails(s3, params, key, rekognition)
-        .then(function(data){
-            console.log('My new log ', data);
-        });
     });
   });
 }
@@ -134,7 +127,7 @@ function download(s3, params, key) {
   s3.getObject(params).createReadStream().pipe(file);
 }
 
-function analyse(key) {
+function analyse(s3, params, key) {
   return new Promise(function(resolve, reject) {
     try {
       let fname = key.indexOf("test") < 0 ? __dirname + "/public/test/" + key
@@ -152,7 +145,18 @@ function analyse(key) {
         console.log('Error: ' + error.message);
         reject(error)
     }
-  });
+  }).then(exifData => {
+    return new Promise(function(resolve, reject) {
+       details.detectDetails(s3, params, key, rekognition)
+        .then(function(data){
+            console.log('My new log ', data);
+            resolve( data);
+        }).catch(function(err){
+            reject(err);
+        });
+    });  
+
+  })
 
 }
 
@@ -185,20 +189,22 @@ router.route('/')
 
 router.route('/:id')
       .get((req, res, next) => {
+        console.log('Going to analyse')
         // todo plug analysis via Amazon
-        analyse(req.params['id'])
+        analyse(s3, bucketParams, req.params['id'])
           .then(result => {
-            res.send({
-              status: 'Ok',
-              exif: result
-            })
+            res.send(Object.assign(  
+            {
+              status: 'OK'
+            }, result
+            ))
           })
           .catch(err => console.log(err));
 
       })
       .all((req, res, next) => {
         res.status(501).send('Not implemented')
-      })
+      });
 
 express()
   .use(cors())
@@ -209,6 +215,6 @@ express()
       res.writeHead(500);
       res.end('Server error!');
    })
-  .listen(3001)
+  .listen(3001);
 
 
