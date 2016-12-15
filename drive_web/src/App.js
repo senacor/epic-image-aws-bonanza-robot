@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import Key from './Key.jsx'
+import Camera from './Camera.jsx'
 
 class App extends Component {
 
@@ -9,14 +10,6 @@ class App extends Component {
     super()
     this.down = this.down.bind(this)
     this.up = this.up.bind(this)
-  }
-
-  click () {
-    fetch('http://localhost:8080/camera/click', {
-          method: 'post'
-        }).then(function(response) {
-          console.log('posted click')
-        })
   }
 
   down (event) {
@@ -62,7 +55,7 @@ class App extends Component {
             <Key ref="right" direction="right"/>
           </div>
           <div className="App-intro">
-            <img src="camera.png" alt="click" onClick={this.click}/>
+            <Camera/>
           </div>
         </div>
       </div>
