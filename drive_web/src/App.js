@@ -2,45 +2,8 @@ import React, { Component } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import Key from './Key.jsx'
-import {DirectionCommand, StopCommand} from './Command'
 
 class App extends Component {
-
-  constructor () {
-    super()
-    this.down = this.down.bind(this)
-    this.up = this.up.bind(this)
-  }
-
-  move (direction) {
-    new DirectionCommand(direction).move()
-  }
-
-  stop (event) {
-    new StopCommand().stop()
-  }
-
-  down (event) {
-    if (event.key !== this.buttonPressed) {
-      this.buttonPressed = event.key
-      this.move(this._translateDirection(event.key))
-    }
-  }
-
-  up (event) {
-    if (event.key === this.buttonPressed) {
-      this.stop()
-    }
-  }
-
-  _translateDirection (direction) {
-    switch (direction) {
-      case 'ArrowUp' : return 'up'
-      case 'ArrowDown' : return 'down'
-      case 'ArrowLeft' : return 'left'
-      case 'ArrowRight' : return 'right'
-    }
-  }
 
   render () {
     return (

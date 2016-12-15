@@ -23,6 +23,14 @@
   justify-content: center;
 }
 
+.transbox {
+  margin: 0px;
+  background-color: #ffffff;
+  border: 0px solid black;
+  opacity: 0.4;
+  filter: alpha(opacity=60); /* For IE8 and earlier */
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
