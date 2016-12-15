@@ -4,6 +4,7 @@ import uuid
 import boto3
 import json
 import paho.mqtt.client as mqtt
+from time import time
 
 
 FORWARD = "forward"
@@ -65,13 +66,13 @@ def stop():
 
 def captureImage():
         print("Capture image")
-        strUuid = str(uuid.uuid4())
+        s3FileName = str(time()) + "_" + str(uuid.uuid4())
         camera.capture("image.jpg")
         data = open("image.jpg", "rb")
         print("Tranfer image to S3")
-        s3.Bucket("com.senacor.tecco.insanerobot").put_object(Key="test/"+strUuid, Body=data)
-        print(("Send MQTT notification for image " + strUuid))
-        client.publish("robot/camera", json.JSONEncoder().encode({"image": strUuid}))
+        s3.Bucket("com.senacor.tecco.insanerobot").put_object(Key="test/"+s3FileName, Body=data)
+        print(("Send MQTT notification for image " + s3FileName))
+        client.publish("robot/camera", json.JSONEncoder().encode({"image": s3FileName}))
 
 
 def on_connect(client, userdata, flags, rc):
