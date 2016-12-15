@@ -1,5 +1,5 @@
 let mqtt = require('mqtt')
-let client = mqtt.connect('mqtt://10.22.0.96')
+let client = mqtt.connect('mqtt://10.22.0.204')
 
 const FORWARD = 'forward'
 const BACKWARD = 'backward'

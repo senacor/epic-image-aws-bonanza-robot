@@ -18,9 +18,10 @@ app.post('/drive/:command', function (request, response) {
   let command = request.params.command
   if ([sendCommand.FORWARD, sendCommand.BACKWARD, sendCommand.STOP, sendCommand.LEFT, sendCommand.RIGHT].indexOf(command) >= 0) {
     sendCommand.send(command)
-    response.status(200)
+    response.end()
   } else {
     response.status(404).json('Unknown command: ' + command)
+    response.end(404)
   }
 })
 
