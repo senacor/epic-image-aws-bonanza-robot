@@ -1,0 +1,18 @@
+{
+  "name": "drive_server",
+  "version": "1.0.0",
+  "description": "Send control commands via mqtt. ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/senacor/epic-image-aws-bonanza-robot/drive_server"
+  },
+  "author": "Martin Blume",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
