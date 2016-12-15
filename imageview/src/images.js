@@ -9,13 +9,17 @@ const AWS = require('aws-sdk');
 const https = require('https');
 const os = require('os');
 
+const ip = os.networkInterfaces().en0.filter(i => i.family === 'IPv4').map(e => e.address)[0];
 const bucketId = 'com.senacor.tecco.insanerobot'
 const client = mqtt.connect('mqtt://10.22.0.204:1883')
 
 client.on('connect', function() {
   client.subscribe('robot/camera');
-  client.publish('TATA...DR. NODE IS ON');
 });
+
+setInterval(() => {
+  client.publish('robot/service', JSON.stringify({service: 'images', url: `http://${ip}:3001/images`}));
+}, 30000);
 
 client.on('message', function(topic, message) {
   console.log(`Received ${message} on topic ${topic}`)
@@ -120,7 +124,7 @@ setInterval(() => {
   listAll(s3, bucketParams);
 }, 60000)
 
-const ip = os.networkInterfaces().en0.filter(i => i.family === 'IPv4').map(e => e.address)[0];
+
 
 router.use(bodyParser.json())
 router.route('/')
