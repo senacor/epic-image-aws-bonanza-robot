@@ -1,0 +1,29 @@
+{
+  "name": "imageview",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.7.14",
+    "aws-sdk-mock": "^1.6.1",
+    "chai": "^3.5.0",
+    "connect": "^3.5.0",
+    "express": "^4.14.0",
+    "karma": "^1.3.0",
+    "karma-chai": "^0.1.0",
+    "karma-clear-screen-reporter": "^1.0.0",
+    "karma-cli": "^1.0.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-mocha": "^1.3.0",
+    "karma-sinon": "^1.0.5",
+    "karma-sinon-chai": "^1.2.4",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0",
+    "underscore": "^1.8.3"
+  }
+}
