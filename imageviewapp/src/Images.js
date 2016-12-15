@@ -60,6 +60,7 @@ class Images extends Component {
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.analyse = this.analyse.bind(this);
   }
 
   componentDidMount() {
@@ -81,6 +82,29 @@ class Images extends Component {
     });
   }
 
+  analyse(e) {
+    let url = e.target.src;
+    let key = url.replace(/.*test/, "")
+
+    console.log("Analysing " + key);
+    const self = this;
+    axios
+      .create({
+        timeout: 10000
+      })
+      .get(service + "/" + key)
+        .then(function(resp) {
+          console.dir(resp.data["Labels"]);
+          self.setState({
+            recognized: resp.data["Labels"]
+          });
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+
+  }
+
   afterOpenModal() {
     // references are now sync'd and can be accessed.
     this.refs.subtitle.style.color = '#f00';
@@ -95,7 +119,7 @@ class Images extends Component {
     axios
       .create({
         // baseURL: 'http://localhost:3001',
-        timeout: 1000
+        timeout: 10000
       })
       .get(service)
         .then(function(resp) {
@@ -114,30 +138,28 @@ class Images extends Component {
   }
 
   render() {
-    // let d = JSON.stringify(this.state.details);
+    let ai = this.state.recognized ?
+              this.state.recognized
+              .map(elem => {
+                return (<label>{elem["Name"]} ({elem["Confidence"]})</label>);
+              }).map(res => <div>{res}</div>)
+              : <div></div>
+    console.log(ai);
     let elems = (<div>...waiting for robot to send images</div>);
     elems = this.state.images.sort().reverse().map(image => { return (
-      <div className="image-box" key={image.id} onClick={this.openModal}>
-        <Modal
-          isOpen={this.state.modalIsOpen}
-          onAfterOpen={this.afterOpenModal}
-          onRequestClose={this.closeModal}
-          contentLabel="Image details"
-          style={customStyles}
-        >
-          <h2>Image details</h2>
-          <div>
-            <Dump url={image.url}/>
-          </div>
-          <button onClick={this.closeModal}>close</button>
-        </Modal>
+      <div className="image-box" key={image.id} onClick={this.analyse}>
         <img role="presentation" className="image" src={image.url}/>
       </div>
     )});
 
     return (
+      <div>
       <div className="images-container">
         {elems}
+      </div>
+      <div className="ai">
+          {ai}
+        </div>
       </div>
     );
   }

@@ -129,34 +129,36 @@ function download(s3, params, key) {
 
 function analyse(s3, params, key) {
   return new Promise(function(resolve, reject) {
-    try {
-      let fname = key.indexOf("test") < 0 ? __dirname + "/public/test/" + key
-                                           : __dirname + "/public/" + key
-
-      console.log("Analysing " + fname);
-      new ExifImage({ image : fname }, function (error, exifData) {
-          if (error)
-              console.log('Error: '+error.message);
-          else
-              console.log(exifData); // Do something with your data!
-              resolve(exifData);
-      });
-    } catch (error) {
-        console.log('Error: ' + error.message);
-        reject(error)
-    }
-  }).then(exifData => {
-    return new Promise(function(resolve, reject) {
        details.detectDetails(s3, params, key, rekognition)
         .then(function(data){
             console.log('My new log ', data);
-            resolve( data);
+            resolve(data);
         }).catch(function(err){
             reject(err);
         });
-    });  
+    });
 
-  })
+  // return new Promise(function(resolve, reject) {
+  //   try {
+  //     let fname = key.indexOf("test") < 0 ? __dirname + "/public/test/" + key
+  //                                          : __dirname + "/public/" + key
+
+  //     console.log("Analysing " + fname);
+  //     new ExifImage({ image : fname }, function (error, exifData) {
+  //         if (error)
+  //             console.log('Error: '+error.message);
+  //         else
+  //             console.log(exifData); // Do something with your data!
+  //             resolve(exifData);
+  //     });
+  //   } catch (error) {
+  //       console.log('Error: ' + error.message);
+  //       reject(error)
+  //   }
+  // }).then(exifData => {
+
+
+  // })
 
 }
 
@@ -193,7 +195,7 @@ router.route('/:id')
         // todo plug analysis via Amazon
         analyse(s3, bucketParams, req.params['id'])
           .then(result => {
-            res.send(Object.assign(  
+            res.send(Object.assign(
             {
               status: 'OK'
             }, result

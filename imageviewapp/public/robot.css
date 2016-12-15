@@ -2,6 +2,12 @@ body {
   background-color: #EEE;
 }
 
+div.ai {
+  font-family: monospace;
+  font-size: 0.8em;
+  word-wrap: break-word;
+}
+
 label {
   font-weight: bold;
   display:block;clear:both;
@@ -55,6 +61,6 @@ div.details {
   height: auto;
 }
 
-.image-box:hover {
+/*.image-box:hover {
   transform: scale(2);
-}
+}*/
