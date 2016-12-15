@@ -22,7 +22,7 @@ class Dump extends Component {
     const self = this;
     axios
       .create({
-        timeout: 1000
+        timeout: 10000
       })
       .get(service + "/" + key)
         .then(function(resp) {
@@ -56,11 +56,11 @@ class Dump extends Component {
   }
 
   render() {
-    let exif = this.state.details['exif'];
-    if (!exif) {
+    let labels = this.state.details['labels'];
+    if (!labels) {
       return (<div></div>)
     }
-    let e = this.generateElemsForObject(exif);
+    let e = this.generateElemsForObject(labels);
     return (
       <div>
         {e}

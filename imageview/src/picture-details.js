@@ -14,6 +14,8 @@ var detectDetails = function (s3, params, key, rekognition) {
 		awskey = `test/${key}`;
 	}
 
+  awskey = awskey.replace(/\.jpg/, "");
+
 	console.log("Searching for " + awskey);
 
 	return new Promise(function(resolve, reject) {
