@@ -37,13 +37,15 @@ function listAll(s3, params) {
 
       let fname = __dirname + "/public/" + key + ".jpg"
       if (fs.existsSync(fname)) {
-        console.log(`${fname} already exists...skip download`);
+        // console.log(`${fname} already exists...skip download`);
         return;
       }
 
       console.log(`Downloading ${fname}`)
       https.get(url, function(resp) {
-        resp.pipe(fs.createWriteStream(fname));
+        resp.pipe(fs.createWriteStream(fname))
+            .on('finish', () =>
+              console.log("DONE"));
       });
     });
   });
@@ -80,3 +82,5 @@ function download(s3, params, key) {
 }
 
 listAll(s3, bucketParams);
+
+

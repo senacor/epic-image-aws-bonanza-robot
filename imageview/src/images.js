@@ -4,13 +4,33 @@ const router = express.Router()
 const uuidV4 = require('uuid/v4');
 const cors = require('cors')
 const fs = require('fs')
+const mqtt = require('mqtt')
+const AWS = require('aws-sdk');
+const https = require('https');
+const os = require('os');
 
 const bucketId = 'com.senacor.tecco.insanerobot'
+const client = mqtt.connect('mqtt://10.22.0.204:1883')
 
-const AWS = require('aws-sdk');
-// const uuidV4 = require('uuid/v4');
-// const fs = require('fs');
-const https = require('https');
+client.on('connect', function() {
+  client.subscribe('robot/camera');
+  client.publish('TATA...DR. NODE IS ON');
+});
+
+client.on('message', function(topic, message) {
+  console.log(`Received ${message} on topic ${topic}`)
+
+  try {
+    payload = JSON.parse(message);
+
+    if (payload.image) {
+      console.log("Should fetch " + payload.image);
+      listAll(s3, bucketParams);
+    }
+  }
+  catch (e) {
+  }
+});
 
 let s3 = new AWS.S3({
                signatureVersion: 'v4'
@@ -48,15 +68,17 @@ function listAll(s3, params) {
         return;
       }
 
-      let fname = __dirname + "/public/" + key + ".jpg"
-      if (fs.existsSync(fname)) {
-        console.log(`${fname} already exists...skip download`);
+      let fname = __dirname + "/public/" + key
+      if (fs.existsSync(fname) || fs.existsSync(fname + ".jpg") ) {
+        // console.log(`${fname} already exists...skip download`);
         return;
       }
 
       console.log(`Downloading ${fname}`)
       https.get(url, function(resp) {
-        resp.pipe(fs.createWriteStream(fname));
+        resp.pipe(fs.createWriteStream(fname))
+            .on('unpipe', () =>
+              fs.renameSync(fname, fname + ".jpg"));
       });
     });
   });
@@ -96,16 +118,19 @@ listAll(s3, bucketParams);
 
 setInterval(() => {
   listAll(s3, bucketParams);
-}, 5000)
+}, 60000)
+
+const ip = os.networkInterfaces().en0.filter(i => i.family === 'IPv4').map(e => e.address)[0];
 
 router.use(bodyParser.json())
 router.route('/')
       .get((req, res, next) => {
         let d = fs.readdirSync('src/public/test')
+          .filter(elem => elem.endsWith(".jpg"))
           .map(elem => {
             return {
               id: elem,
-              url: `http://localhost:3001/test/${elem}`
+              url: `http://${ip}:3001/test/${elem}`
             }
           });
 
@@ -134,3 +159,5 @@ express()
   .use(express.static(__dirname + '/public'))
   .use('/images', router)
   .listen(3001)
+
+
