@@ -1,3 +1,4 @@
+var sendCommand = require('./send-command')
 var express = require('express')
 var app = express()
 
@@ -15,8 +16,9 @@ app.use(function (reqest, response, next) {
 
 app.post('/drive/:command', function (request, response) {
   let command = request.params.command
-  if (['forward', 'backward', 'stop', 'left', 'right'].indexOf(command) >= 0) {
-    console.log('executing command ' + command)
+  if ([sendCommand.FORWARD, sendCommand.BACKWARD, sendCommand.STOP, sendCommand.LEFT, sendCommand.RIGHT].indexOf(command) >= 0) {
+    sendCommand.send(command)
+    response.status(200)
   } else {
     response.status(404).json('Unknown command: ' + command)
   }
