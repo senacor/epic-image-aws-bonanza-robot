@@ -6,6 +6,8 @@ import json
 import paho.mqtt.client as mqtt
 from time import time
 
+MQTT_IP = "10.22.0.204"
+MQTT_PORT = 1883
 
 FORWARD = "forward"
 BACKWARD = "backward"
@@ -34,20 +36,21 @@ camera = PiCamera()
 s3 = boto3.resource("s3", config= boto3.session.Config(signature_version='s3v4'))
 
 
+def wheelState(state_right_1, state_right_2, state_left_1, state_left_2):
+    GPIO.output(WHEEL_RIGHT_1, state_right_1)
+    GPIO.output(WHEEL_RIGHT_2, state_right_2)
+    GPIO.output(WHEEL_LEFT_1, state_left_1)
+    GPIO.output(WHEEL_LEFT_2, state_left_2)
+
+
 def forward():
     print("Moving forward")
-    GPIO.output(WHEEL_RIGHT_1, False)
-    GPIO.output(WHEEL_RIGHT_2, True)
-    GPIO.output(WHEEL_LEFT_1, False)
-    GPIO.output(WHEEL_LEFT_2, True)
+    wheelState(False, True, False, True)
 
 
 def backward():
     print("Moving backward")
-    GPIO.output(WHEEL_RIGHT_1, True)
-    GPIO.output(WHEEL_RIGHT_2, False)
-    GPIO.output(WHEEL_LEFT_1, True)
-    GPIO.output(WHEEL_LEFT_2, False)
+    wheelState(True, False, True, False)
 
 
 def left():
@@ -60,18 +63,12 @@ def left():
 
 def right():
     print("Moving right")
-    GPIO.output(WHEEL_RIGHT_1, True)
-    GPIO.output(WHEEL_RIGHT_2, False)
-    GPIO.output(WHEEL_LEFT_1, False)
-    GPIO.output(WHEEL_LEFT_2, True)
+    wheelState(True, False, False, True)
 
 
 def stop():
     print("Stop moving")
-    GPIO.output(WHEEL_RIGHT_1, False)
-    GPIO.output(WHEEL_RIGHT_2, False)
-    GPIO.output(WHEEL_LEFT_1, False)
-    GPIO.output(WHEEL_LEFT_2, False)
+    wheelState(False, False, False, False)
 
 
 def changeGear(dutyCycle):
@@ -154,7 +151,7 @@ try:
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_publish = on_publish
-    client.connect("10.22.0.204", 1883, 60)
+    client.connect(MQTT_IP, MQTT_PORT, 60)
 
     client.loop_forever()
 
