@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 
-const service = "http://10.22.0.127:3001/images";
+const service = "http://localhost:3001/images";
 class Dump extends Component {
   constructor(props) {
     super(props)

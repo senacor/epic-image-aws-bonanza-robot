@@ -1,31 +1,31 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import mqtt from 'mqtt';
-import Modal from 'react-modal';
-import Dump from './Dump';
+// import Modal from 'react-modal';
+// import Dump from './Dump';
 
-const customStyles = {
-  overlay : {
-    position          : 'fixed',
-    top               : 0,
-    left              : 0,
-    right             : 0,
-    bottom            : 0,
-    backgroundColor   : 'rgba(211, 211, 211, 0.10)'
-  },
-  content : {
-    border                : 'solid 3px black',
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)',
-    width                 : '600px'
-  }
-};
+// const customStyles = {
+//   overlay : {
+//     position          : 'fixed',
+//     top               : 0,
+//     left              : 0,
+//     right             : 0,
+//     bottom            : 0,
+//     backgroundColor   : 'rgba(211, 211, 211, 0.10)'
+//   },
+//   content : {
+//     border                : 'solid 3px black',
+//     top                   : '50%',
+//     left                  : '50%',
+//     right                 : 'auto',
+//     bottom                : 'auto',
+//     marginRight           : '-50%',
+//     transform             : 'translate(-50%, -50%)',
+//     width                 : '600px'
+//   }
+// };
 
-let service = "http://10.22.0.127:3001/images"
+let service = "http://localhost:3001/images"
 
 const client = mqtt.connect('mqtt://10.22.0.204:9001')
 client.on('connect', function() {
@@ -53,7 +53,8 @@ class Images extends Component {
     super(props);
 
     this.state = {
-      images: []
+      images: [],
+      status: ""
     };
 
     this.fetchImages = this.fetchImages.bind(this);
@@ -86,6 +87,12 @@ class Images extends Component {
     let url = e.target.src;
     let key = url.replace(/.*test/, "")
 
+    this.setState({
+            status: "Analysing image data...",
+            recognized: null,
+            analysedUrl: url
+          });
+
     console.log("Analysing " + key);
     const self = this;
     axios
@@ -96,13 +103,17 @@ class Images extends Component {
         .then(function(resp) {
           console.dir(resp.data["Labels"]);
           self.setState({
-            recognized: resp.data["Labels"]
+            recognized: resp.data["Labels"],
+            analysedUrl: url
           });
         })
         .catch(function(err) {
           console.log(err);
+          self.setState({
+            recognized: null,
+            analysedUrl: ""
+          });
         });
-
   }
 
   afterOpenModal() {
@@ -137,17 +148,59 @@ class Images extends Component {
         });
   }
 
+  imageBoxStyle(url) {
+    let className = "image-box "
+
+    if (url === this.state.analysedUrl) {
+      className += "image-selected";
+    }
+
+    return className;
+  }
+
+  aiResultClass(confidence) {
+    let val = Number(confidence);
+
+    if (isNaN(val)) {
+      return "unsure";
+    }
+
+    if (val < 60) {
+      return "unsure";
+    }
+
+    if (val < 80) {
+      return "sure";
+    }
+
+    if (val < 90) {
+      return "very-sure";
+    }
+    return "certain";
+  }
+
+  roundConfidence(conf) {
+    let val = Number(conf);
+
+    if (isNaN(val)) {
+      return 0;
+    }
+
+    return Math.round(val * 100) / 100
+  }
+
   render() {
     let ai = this.state.recognized ?
               this.state.recognized
               .map(elem => {
-                return (<label>{elem["Name"]} ({elem["Confidence"]})</label>);
-              }).map(res => <div>{res}</div>)
-              : <div></div>
-    console.log(ai);
+                return (<span className={this.aiResultClass(elem["Confidence"])} key={elem["Name"]}>{elem["Name"]} ({this.roundConfidence(elem["Confidence"])})</span>);
+              }).map(res => <div className="analysis-item">{res}</div>)
+              : <div>{this.state.status}</div>
+
     let elems = (<div>...waiting for robot to send images</div>);
-    elems = this.state.images.sort().reverse().map(image => { return (
-      <div className="image-box" key={image.id} onClick={this.analyse}>
+    // elems = this.state.images.sort().reverse().map(image => { return (
+    elems = this.state.images.map(image => { return (
+      <div className={this.imageBoxStyle(image.url)} key={image.id} onClick={this.analyse}>
         <img role="presentation" className="image" src={image.url}/>
       </div>
     )});
@@ -157,7 +210,7 @@ class Images extends Component {
       <div className="images-container">
         {elems}
       </div>
-      <div className="ai">
+      <div className="ai analysis-report">
           {ai}
         </div>
       </div>
